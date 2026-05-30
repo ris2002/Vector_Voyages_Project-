@@ -1,0 +1,618 @@
+Alam et al. BMC Medical Imaging (2025) 25:5 BMC Medical Imaging
+https://doi.org/10.1186/s12880-024-01546-4
+RESEARCH Open Access
+Novel transfer learning based bone fracture
+detection using radiographic images
+Aneeza Alam1, Ahmad Sami Al-Shamayleh2, Nisrean Thalji3, Ali Raza4, Edgar Anibal Morales Barajas5,6,7,
+Ernesto Bautista Thompson5,6,8, Isabel de la Torre Diez9 and Imran Ashraf10*
+Abstract
+A bone fracture is a medical condition characterized by a partial or complete break in the continuity of the bone.
+Fractures are primarily caused by injuries and accidents, affecting millions of people worldwide. The healing process
+for a fracture can take anywhere from one month to one year, leading to significant economic and psychological chal-
+lenges for patients. The detection of bone fractures is crucial, and radiographic images are often relied on for accurate
+assessment. An efficient neural network method is essential for the early detection and timely treatment of fractures.
+In this study, we propose a novel transfer learning-based approach called MobLG-Net for feature engineering pur-
+poses. Initially, the spatial features are extracted from bone X-ray images using a transfer model, MobileNet, and then
+input into a tree-based light gradient boosting machine (LGBM) model for the generation of class probability features.
+Several machine learning (ML) techniques are applied to the subsets of newly generated transfer features to com-
+pare the results. K-nearest neighbor (KNN), LGBM, logistic regression (LR), and random forest (RF) are implemented
+using the novel features with optimized hyperparameters. The LGBM and LR models trained on proposed MobLG-Net
+(MobileNet-LGBM) based features outperformed others, achieving an accuracy of 99% in predicting bone fractures.
+A cross-validation mechanism is used to evaluate the performance of each model. The proposed study can improve
+the detection of bone fractures using X-ray images.
+Keywords Radiographic images, Bone fractures, Deep learning, Transfer learning, Image processing
+*Correspondence:
+Imran Ashraf
+ashrafimran@live.com
+1 Faculty of Computer Science and Information Technology, Khwaja
+Fareed University of Engineering & Information Technology, Rahim Yar
+Khan, Pakistan
+2 Department of Data Science and Artificial Intelligence, Faculty
+of Information Technology, Al-Ahliyya Amman University, Amman 19328,
+Jordan
+3 Faculty of Computer Studies, Arab Open University, Amman, Jordan
+4 Department of Software Engineering, University of Lahore,
+Lahore 54000, Pakistan
+5 Universidad Europea del Atlantico, Santander 39011, Spain
+6 Universidad Internacional Iberoamericana, Campeche 24560, Mexico
+7 Universidad de La Romana, La Romana, República Dominicana
+8 Universidade Internacional do Cuanza, Cuito, Bie, Angola
+9 Department of Signal Theory, Communications and Telematics
+Engineering, Unviersity of Valladolid, Paseo de Belen, 15, 47011 Valladolid,
+Spain
+10 Department of Information and Communication Engineering,
+Yeungnam University, Gyeongsan 38541, Republic of Korea
+© The Author(s) 2025. Open Access This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+International License, which permits any non-commercial use, sharing, distribution and reproduction in any medium or format, as long
+as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons licence, and indicate if
+you modified the licensed material. You do not have permission under this licence to share adapted material derived from this article or
+parts of it. The images or other third party material in this article are included in the article’s Creative Commons licence, unless indicated
+otherwise in a credit line to the material. If material is not included in the article’s Creative Commons licence and your intended use is not
+permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To
+view a copy of this licence, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 2 of 16
+Introduction • Hyperparameter tuning is done to get the most opti-
+The human body contains 206 bones of different shapes, mized results from ML models from both sets of fea-
+sizes, and strengths. Detecting internal injuries, espe- tures.
+cially minor ones, is a challenging task for orthopedics. • A comparison of applied models and state-of-the-art
+Machine learning (ML) is becoming prominent in ana- techniques is presented to give a better view of how
+lyzing radiographic images to detect bone injuries. The important the research findings are.
+features extracted from X-ray images help identify the
+fracture and healthy bones [1]. These features help doc- The remaining paper is organized as follows: Literature
+tors diagnose and treat ailments in a timely manner. review section covers the previous investigations done
+In 2019, the Global Burden of Diseases(GBD) reported to detect fractures in bones using X-ray images. The
+178 million new fractures only, an average increase of proposed novel feature extraction and applied machine-
+33.4% more than in 1990. There were 445 million cases of learning models are discussed in Proposed methodol-
+acute or prevalent cases of fractures [2]. Fractures impact ogy section. Results and discussions section has detailed
+patients’ quality of life and put an economic burden on performance metrics of the applied methods on both sets
+the health system. The average global cost for one year of features, along with a comparison with previous stud-
+of health and social care for hip fracture is $43,669 [3]. ies. The conclusion and the prospects of the study are
+These high costs of treatment emphasize the importance discussed in the final section.
+of timely recovery, as prolonged diseases have a signifi-
+cant financial burden on patients. Literature review
+Traditionally, X-ray reports are examined by trained
+Artificial intelligence has been used in the past to detect
+medical practitioners, mostly radiologists [4]. This way
+fractures using clinical and publicly available data. The
+of fracture diagnosis is prone to human error and incon-
+literature contains fracture detection studies using arti-
+sistencies. There is a viable chance that a fracture may be
+ficial intelligence [10] on open-source and clinical radio-
+overlooked. The traditional method is time-consuming,
+graphic bone image datasets.
+and delayed diagnosis may lead to improper handling.
+An average precision of 62.04% is achieved by Guan
+The accuracy of these diagnoses depends entirely on the
+et al. [11] using 4,000 arm x-ray images. They handled the
+medical professional’s experience, and years of practice
+low-quality, noisy dataset, which had images with a dark
+are needed for accurate interpretation. Also, one person
+background. However, the precision achieved is not very
+can attend to a limited number of patients, delaying the
+high, it is better than many modern deep learning (DL)
+diagnosis and treatment process. So, there is a need for
+methods.
+a more reliable and quicker way of radiographic fracture
+Analysis performed by Kim and MacKinnon [12]
+identification.
+achieved an accuracy of 95%. They used a dataset of
+ML in medical fields has revolutionized healthcare by
+11,112 radiographic images of wrists. The dataset was
+improving accuracy, treatment, and personal care [5, 6].
+divided into 80:10:10 training, validation, and testing
+Image processing and ML techniques have eased disease
+groups. They trained CNN based on Tensorflow (1.0)
+and drug prediction, improving clinical predictions [7].
+using 20,000 iterations. The testing phase concluded that
+Using ML techniques promises a bright future with bet-
+transfer learning using deep CNN can be applied for
+ter diagnoses, personalized treatments, and improved
+radiographic fracture detection. Training on plain X-ray
+patient outcomes [8]. Recently, transfer learning-based
+images is highly transferable and can be used in medical
+feature engineering has become popular for improving
+imaging to reduce clinical risks.
+the prediction accuracy of image datasets [9]. Pre-trained
+Tanzi et al. [13] studied bone fracture detection and
+neural networks are used in transfer learning to get the
+classification using 95 images augmented to create a
+benefits of the best features from the image dataset.
+dataset of 4476 images. They applied R-CNN to classify
+The main contributions of this study using transfer
+and find the location of the fracture. They achieved an
+learning-based feature extraction are given as:
+accuracy of 96% with a precision of 0.866 in finding the
+precise location of the fracture. They used the VGG16
+• A novel transfer learning-based MobLG-Net feature neural network to predict and locate fractures. The accu-
+extraction approach is introduced, which gives the racy to identify the fracture is 95%.
+most relevant features that are further used for train- An average accuracy of 86.76% is achieved by Lee et al.
+ing ML models. using a dataset of 786 images [14]. The images were
+• Five ML models are applied to both spatial and resized to 512 x 512 pixels using Bi-LSTM decoded. The
+MobLG-Net features to get an unbiased comparison models applied were GoogLeNet-inception v3 and two
+of both techniques. proposed M1 and M2 models. The accuracy achieved by
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 3 of 16
+the proposed methods is not that high, and the dataset Level Co-occurrence Matrix (GLCM) used five proper-
+size is small. ties (correlation, dissimilarity, energy, homogeneity, and
+Wrist fracture detection using X-ray images was done contrast), four distances, and seven angles for feature
+by Hardalac et al. [15] utilizing 26 different artificial intel- extraction. This technique extracted 140 features for
+ligence models. Twenty distinct fracture identification each image. Five different machine-learning algorithms
+processes were carried out on the wrist X-ray images were used after splitting the dataset into 80:20. Highest
+dataset from Gazi University Hospital. The experiment is accuracy, i.e. 92.85, in the current scenario is achieved by
+conducted using object detection models with different SVM.
+backbones. An average precision of 86.39% is achieved A recent study [19] on long bone fracture detection
+with a uniquely designed wrist fracture detection-combo uses a dataset of 3000 X-ray images of fractured and nor-
+(WFD-C) model. mal bones. The dataset was divided into 7:2:1 training,
+The study [16] proposed DL techniques for fracture validation, and test datasets for applying machine-learn-
+detection. A DL-based convolution neural network was ing algorithms. The highest accuracy 96.5% is achieved by
+developed using plain X-ray images of a biplane. The the ResNet50 Fine Tune model with a loss score of 0.16.
+training and validation datasets consisted of 3245 frac- Binary classification achieved an accuracy of 87.7% for
+tured and 3210 normal wrist images, respectively. An four classes, which is low compared to other models. This
+accuracy of 98.0% is achieved using CNN based on the can be due to the reduced dataset size, which was split
+VGG16 model. The diagnosis identifies the fracture and into four classes.
+points to its location using a heat map. This diagnosis Table 1 shows a summary of the analyzed works.
+method reduced the error of fracture detection to 47% Numerous studies have been conducted to recognize
+in the trauma centers. As the dataset used for the study fractures using radiographic images. A thorough look
+is only from adults above 18 years, fracture detection in into the literature has revealed some limitations that
+children is impossible as their bones have intact epiphy- need to be addressed.
+seal lines. We found that most of the studies used a specific region
+The survey conducted by Sahin [17] used 176 radi- of the body to identify the fracture. Despite existing stud-
+graphic images with 105 normal and 71 cracked ones. ies, the fracture detection accuracy is low. In addition,
+They used color space conversion to convert the images feature engineering part using transfer learning is under
+to grayscale format. Canny edge detection was performed investigated. There are minimal studies that can general-
+for edge detection. For the classification of normal and ize fractures from all body parts. So, there is a need for a
+fractured bone, 12 different machine-learning models study that can identify common fractures so that findings
+were utilized. The highest accuracy of 89% was achieved can be practically implemented in medical care centers.
+by the LDA classifier, followed by 86% for logistic regres-
+Proposed methodology
+sion and 85% for the RF classifier, respectively.
+The study conducted by Ahmed et al. [18] used a small Figure 1 shows the methodology followed for fracture
+dataset of 270 lower-leg X-ray images. The dataset was detection using radiographic images. Two types of fea-
+pre-processed via various stages, i.e., noise cancella- tures are extracted from the existing X-ray images data-
+tion, contrast improvement, and edge detection. Gray set. We used CNN and a novel proposed MobLG-Net
+Table 1 The analyzed literature review comparison
+Ref. Year Dataset used Technique used Accuracy
+[12] 2018 11,112 wrist images CNN based on TensorFlow 95%
+[11] 2020 4,000 arm images Stochastic Gradient Descent 62.04% AP
+[14] 2020 786 X-ray images GoogLeNet-inception v3, M1, M2 86.78%
+[16] 2021 6,455 wrist images CNN 98.0%
+[13] 2020 4476 CNN, VGG16 96%
+[15] 2022 Not defined wrist fracture detection-combo (WFD-C) 86.39% AP
+[17] 2023 176 images LDA classifier, LR, RF classifier 89%, 86%, 85%
+[18] 2023 270 lower leg images Naive Bayes, Nearest Neighbors, Decision Tree, SVM, 64.2%, 83.9%,
+Random Forest 80.3%, 92.8%,
+85.7%
+[19] 2024 3000 radiographs of bones ResNet50 96.5%
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 4 of 16
+Fig. 1 The architectural illustrations of the proposed methodology for fracture detection
+method to get useful features from the given dataset. of images is 12 kb with 160 dpi average resolution. The
+Each set of features is utilized for training machine shape of the training set is 8863,224,224,3.
+learning models. The extracted features are split into
+80% training and 20% test datasets. The outperformed Novel transfer learning‑based feature engineering
+approach is used to detect fractures in bones using an Using the radiographic images dataset, we have sug-
+X-ray image dataset. gested a novel transfer learning-based feature engineer-
+ing method, i.e. MobLG-Net, to detect fractured and
+Radiographic images dataset healthy bone. The feature extraction mechanism is illus-
+The publically available benchmark bone fracture multi- trated in Fig. 4. The novel MobLG-Net approach used
+region x-ray images dataset is utilized in this study [20]. three methods to get spatial features from the radio-
+The dataset contains 9,463 X-ray images of fractured and graphic images dataset. First, the sequential model is
+normal bones from all body parts, including knees, limbs, implemented with the first layer of convo2D having 64
+hips, lumber, etc. The dataset consists of two classes, filters of 3x3. The linear stack of the sequential model is
+i.e., fractured and non-fractured, as shown in Fig. 2. The followed by max pooling 2D, dropout, flatten, and dense
+number of training and test dataset images is 8,863 and layers. A total of 790,337 trainable features are extracted.
+600, respectively. Then we applied MobileNet, which is based on CNN, and
+used pre-trained ’Imagenet’ weights [22]. The use of a
+Image preprocessing and formation pre-trained model gave better results than the sequential
+To get reliable results from machine learning models, model. Finally, a novel MobLG-Net model, a sequential
+it is necessary to have a clean dataset without any noise model with the first layer of MobileNet (based on CNN),
+or null values [21]. The dataset is imported first using is implemented. Figure 4 illustrates the feature engineer-
+OpenCV, and basic pre-processing is applied to stand- ing techniques used.
+ardize the input data for further analysis that includes The uniqueness of the proposed MobLG-Net lies in
+image resizing. The first step is to resize images to uni- its innovative approach to feature extraction. Unlike tra-
+form 224 x 224 pixels to ensure they are compatible with ditional methods, MobLG-Net combines the strengths
+the neural network architecture. Then, the dataset labels of sequential modeling and transfer learning. Initially, a
+are encoded as ’fractured’:0 and ’non-fractured’:1 to ease sequential model extracts a rich set of 790,337 trainable
+supervised learning. Using a balanced dataset for training features using convolutional layers, max pooling, drop-
+is advisable. Figure 3 shows the number of images in each out, and dense layers. While effective, this approach is
+class. The dataset is balanced as the number of images in outperformed by MobileNet, a lightweight convolutional
+both classes is almost similar. neural network pre-trained on the ’Imagenet’ dataset,
+which leveraged pre-trained weights to capture high-
+Exploratory data analysis level spatial features with greater precision. By integrat-
+The dataset used for training and testing the ensemble ing the first layer of MobileNet with a custom sequential
+fracture detection model consists of 10,580 images hav- model, MobLG-Net maximizes the strengths of both
+ing a uniform resolution of 224x224. The average size feature extraction techniques. This novel combination
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 5 of 16
+Fig. 2 The x-ray images examination using the target label
+Fig. 3 The radiographic images data distribution analysis using encoded target label
+enables the extraction of more nuanced spatial features Algorithm 1 shows the sequential flow of the proposed
+from radiographic images, leading to superior perfor- transfer learning method. Algorithm 2 contains the
+mance across various machine learning classifiers. Pseudo Code for MobLG-Net method.
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 6 of 16
+Fig. 4 The workflow of proposed transfer learning-based feature engineering approach
+Algorithm 1 MobLG-Net algorithm
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 7 of 16
+Algorithm 2 Pseudo code for MobLG‑Net model
+Applied artificial intelligence approaches
+Most of the studies use ML and DL methods in image • CNN: is a famous neural network whose architecture
+classification jobs [23]. Convolution neural networks has been designed to read and absorb visual data
+are the most adopted DL algorithm for image detection such as images by learning the same way humans
+and prediction [24]. They apply numerous layers of fil- do. The network captures different levels of abstrac-
+ters to take out beneficial features from the dataset and tion by using a sequence of convolutional layers,
+understand hidden patterns in the data. Besides clas- from the simple edges and textures in early layers to
+sical CNNs, transfer-based feature extraction is used more complex patterns, such as bone structures or
+to get the most useful features from the radiographic fractures in deeper ones. CNNs are well suited for
+images. We have applied various ML techniques to both medical imaging where we benefit from this hierar-
+spatial and deep features extracted using CNNs and chical feature extraction, which is useful as a bone
+transfer learning. The advanced ML models have per- fracture in X-ray image detection [26]. When prop-
+formed well in the detection and prediction of cracks in erly trained, the CNN can classify new images cor-
+bones when trained and tested on image datasets [25]. rectly by identifying familiar patterns, thus helping in
+decision-making for diagnosis.
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 8 of 16
+• MobileNet: is the proposed novel feature extrac- to its simplicity and capability to handle linearly sep-
+tion approach. It uses a sequential implementation arable data.
+of MobileNet and LGBM to get the most relevant • RF is an ensemble model that combines the estima-
+and effective features from the radiographic images tions of several decision trees and makes a final pre-
+dataset. The proposed method is lightweight and is diction. By constructing several decision trees on dif-
+beneficial where resources like processing power and ferent portions of the training dataset, RF averages
+memory are limited. This is done using a depthwise their output, reducing the risk of overfitting [30].
+separable convolution introduced by MobileNet. A Using multiple trees enhances the generalization
+standard convolution has a filter layer that receives ability of the ML model, making it highly effective for
+the input feature, reshapes it based on filter size, and fracture classification tasks. RF is prominent for its
+then applies operation for each location. The input capability to tackle nosy data and complex patterns,
+channels are convolved with filters separately to pro- giving more accurate results.
+duce the output of each filter in a channel, and then
+pointwise convolution combines these outputs. This
+has the effect of decently reducing both parameters Hyperparameter tuning
+and computational complexity while only losing very Choosing the optimized parameters for training ML
+little accuracy at all. models is crucial as parameters can affect the reliabil-
+• KNN is widely applied for classification tasks, espe- ity of the research findings [23]. Hyperparameter tuning
+cially involving image datasets [27]. KNN classifies involves trying a combination of parameters that give the
+data points based on the proximity to their clos- best performance while testing the trained models [31].
+est neighbor. KNN is a non-parametric ML model Parameter optimization is performed using the rand-
+based on Euclidean distance to calculate the nearest omized search parameters and cross-validation-based
+neighbors. Fracture detection involves local patterns mechanism, which improved the predictive capabilities
+or irregularities within X-ray images. KNN can eas- of ML models [32]. We have used various techniques
+ily identify such irregular patterns as the classifica- twice: once with spatial features extracted using CNNs
+tion relies on local neighbors [28]. This makes KNN and once with the novel MobLG-Net features. The hyper-
+a good choice for fracture detection in bones using parameters used in the applied ML techniques are given
+X-ray images. in Table 2.
+• LGBM is an influential ML algorithm with excellent
+speed and prediction power. LightGBM uses gradient Results and discussions
+boosting to detect complex patterns within the data This section gives a review of the performance of applied
+without losing efficiency. LightGBM can handle large ML techniques. The Results and discussions section
+datasets and scattered features, which makes it an details the experimental setup and presents a compari-
+excellent choice for detecting fractures in bones. son of results from the classical CNN approach and the
+• LR is mostly used in binary classification tasks. LR proposed MobLG-Net approach. The accuracy, preci-
+models the possibility of a certain class by analyz- sion, recall, and f1-score give a comparative analysis of
+ing the input features like the intensity of pixels or models, and these performance metrics are included in
+extracted features [29]. This helps identify if a frac- the Results and discussions section. The Results and dis-
+ture is present or not in the given dataset. LR is well cussions section is the essence of the whole experimental
+suited for classifying fractures from X-ray images due setup and extensively describes the effectiveness of ML
+Table 2 The optimized hyperparameters used for DL and ML techniques
+Model Hyperparameter values
+CNN activation=’sigmoid’, optimizer=’adam’, loss=’binary_crossentropy’
+MobLG‑Net weights = ’imagenet’, activation=’softmax’,
+LGB n_estimators=10, boosting_type=’gbdt’, max_depth=−1, num_leaves=31
+KNN n_neighbors=2, weights=’uniformn’, metric=’minkowski’, leaf_size=30, p=2
+LR penalty=’l2’, max_iter=100, solver=’lbfgs’, fit_intercept=True
+RF max_depth=300, criterion=’gini’, min_samples_split=2, n_estimators=300,
+random_state=0
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 9 of 16
+and DL models in detecting fractures using radiographic Results with ML models
+images. The training and testing of ML models is done on
+two sets of features, i.e. spatial features and novel
+Experimental setup MobileNet extracted features. Time series analysis
+The research experiment is conducted using state-of- shows the variation in learning rates during the training
+the-art Python libraries like sklearn, and TensorFlow. ML time [33]. Spatial features are extracted using CNNs,
+models are trained using a powerful GPU with Intel(R) and Fig. 5 shows the training and validation accuracy
+Core(TM) i5-8350U CPU @ 1.70GHz 1.90 GHz pro- using CNNs. The training accuracy improved with each
+cessor and 15.9 GB RAM. Programs are written using epoch, and the highest accuracy of 91% was achieved.
+Google Colaboratory (a free cloud-based platform for On the other hand, validation results are not that good.
+Python) in Python 3 for training and validation of ML The highest value of validation accuracy is 81%, which
+models. The performance indicators like Accuracy (Acc), is reached in epoch seven and decreases after that.
+recall, precision, and F1 score are extracted to compare Figure 6 shows the training and validation loss across
+the results of the applied ML model. 10 epochs during the training of CNNs. Figure 6a
+In the context of machine learning for bone fracture shows that training loss sharply drops from around 60
+detection, Acc measures the overall correctness of the to almost zero after just one epoch and remains zero
+model by calculating the proportion of correctly classi- throughout the remaining process. When training loss
+fied instances among all predictions. Recall focuses on reduces rapidly to zero and becomes low, indicating
+the model’s ability to correctly identify fractures, ensur- that the model is overfitting and training too well.
+ing that as many true cases as possible are detected. The validation loss starts at 1.6 and decreases up to
+Precision assesses the reliability of fracture predictions, around epoch 5. After this, the value of validation loss
+indicating the proportion of correct fracture predictions fluctuates between 1 and 1.2 but does not drop signifi-
+out of all predicted fractures. Finally, the F1 score com- cantly as training loss. The model initially improved in
+bines precision and recall into a single metric, providing handling unseen data, but fluctuations after epoch 5
+a balanced measure of the model’s performance, espe- indicate that the model started to overfit the training
+cially useful in cases of class imbalance. data.
+Fig. 5 Shows (a) train accuracy and (b) validation accuracy for classical CNN approach
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 10 of 16
+Fig. 6 Shows (a) train loss and (b) validation loss for classical CNN approach
+Results with MobileNet validation loss started to decrease after epoch five and
+The results obtained with the MobileNet approach are reached a minimum value of 0.0 around epochs 9 and 10.
+given in Fig. 7. The training accuracy is initially between
+78% and 87%. The accuracy improved with time and Classification results using CNN and MobileNet
+reached 90% during epoch 2. The training accuracy Table 3 gives the classification of fractured and normal
+reached 95% during epoch nine and remained constant bone images. The CNN model achieves an accuracy of
+during epoch 10. The validation accuracy shows fluctua- 81%, showing a suitable performance. The proposed
+tions throughout the validations. The value of accuracy MobileNet shows a high classification accuracy of 97%.
+started from 91% and improved to 95% from epoch 1 to MobLG-Net clearly outperforms CNN across all per-
+epoch 4. The validation accuracy sharply dropped to 86% formance metrics. High accuracy, precision, recall, and
+at epoch 5, indicating that model performance decreased f1-score values suggest that MobileNet is suitable for
+significantly on the validation data. After epoch 5, the classifying fractured and non-fractured bones. The ability
+validation accuracy again started rising up to 96%, which of MobileNet to classify correctly makes it reliable. How-
+is 1% higher than the training accuracy. ever, still, there is room for performance improvement.
+The training and validation loss scores are illustrated in
+Fig. 8. The training loss starts at a high value of 0.85 and Results with only spatial features
+gradually decreases from epoch 1 to 4. The value of train- The performance of ML models on these classically
+ing loss then remains low between 0.4 and 0.2 through- extracted spatial features is given in Table 4. The highest
+out up to the end. This consistently low value indicates accuracy of 93% is achieved with the LGBM model, fol-
+that the model is learning well from the training data. lowed by random forest having 89% accuracy. The results
+The validation loss is given in Fig. 8b, and its value is of the classical approach are acceptable, and reason-
+0.3, which is not very high compared to the starting value able values of accuracies have been achieved, yet there is
+of train loss. The loss gradually decreases from epoch room for improvement. So, we applied the ML models to
+1 to 4. Just like fluctuations in validation accuracy, the the features extracted from the proposed novel approach.
+validation loss also started to rise during epoch 5. The The results are discussed in the next section.
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 11 of 16
+Fig. 7 Shows (a) train accuracy and (b) validation accuracy for the MobileNet approach
+Fig. 8 Shows (a) train accuracy and (b) validation accuracy for the MobileNet approach
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 12 of 16
+Table 3 The classification of fractured and non-fractured bone features performed well. The light gradient boosting
+images using CNN and MobileNet and logistic regression outperformed the KNN and ran-
+Model Accuracy Label Precision Recall F1 dom forest by 1%. An accuracy of 99% is achieved by
+both algorithms, followed by 98% accuracy of KNN and
+CNN 0.81 Fractured 0.83 0.78 0.80
+RF. The precision, recall, and f1-scores are also above
+Non-fractured 0.79 0.84 0.82
+97, showing the generalization ability of applied models
+Average 0.81 0.81 0.81
+on novel extracted features. Table 5 details each target
+MobileNet 0.96 Fractured 0.95 0.99 0.97
+label’s performance metrics. The proposed transfer learn-
+Non-fractured 0.99 0.95 0.97
+ing approach extracted better features than the classical
+Average 0.97 0.97 0.97
+CNN approach. The proposed method outperformed the
+classical approach by 5%, proving the pre-trained models’
+effectiveness.
+Figure 9 provides the confusion matrix study of the
+Results with proposed approach
+applied methods. The given matrix shows the truth table
+Most optimized features, extracted from the proposed
+of predictions made by the applied models. The confusion
+MobLG-Net, are used for training machine learn-
+matrix analysis illustrates the strengths and weaknesses
+ing models. With the same hyperparameters used for
+of the models. KNC and LGBMC have a lesser number of
+the classical approach, novel transfer learning-based
+false predictions of 22 samples than RF and LR, although
+Table 4 The evaluation of the effectiveness of ML techniques using spatial features on test data
+Model Accuracy Target Class Precision Recall F1 Score Support
+KNN 0.72 fractured 0.67 0.87 0.76 892
+non-fractured 0.81 0.57 0.67 881
+Average 0.74 0.72 0.72 1773
+LGB 0.93 fractured 0.94 0.91 0.93 892
+non-fractured 0.91 0.95 0.93 881
+Average 0.93 0.93 0.93 1773
+LR 0.64 fractured 0.63 0.70 0.66 892
+non-fractured 0.66 0.59 0.62 881
+Average 0.64 0.64 0.64 1773
+RF 0.89 fractured 0.91 0.87 0.89 892
+non-fractured 0.87 0.91 0.89 881
+Average 0.89 0.89 0.89 1773
+Table 5 The performance evaluation of applied ML techniques on features extracted using novel MobLG-Net
+Model Accuracy Target class Precision Recall F1 Score Support
+KNN 0.98 fractured 0.97 0.99 0.98 892
+non-fractured 0.99 0.97 0.98 881
+Average 0.98 0.98 0.98 1773
+LGB 0.99 fractured 0.99 0.99 0.99 892
+non-fractured 0.99 0.99 0.99 881
+Average 0.99 0.99 0.99 1773
+LR 0.99 fractured 0.99 0.99 0.99 892
+non-fractured 0.99 0.99 0.99 881
+Average 0.99 0.99 0.99 1773
+RF 0.98 fractured 0.98 0.98 0.98 892
+non-fractured 0.98 0.98 0.98 881
+Average 0.98 0.98 0.98 1773
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 13 of 16
+Fig. 9 Confusion matrix study of ML approaches with proposed features
+Table 6 The runtime computational complexity analysis of Table 7 The cross-validation-based performance analysis of
+applied ML models applied methods
+Model Runtime computational cost (in seconds) Model K‑fold accuracy Standard
+deviation
+With spatial features With
+MobLG‑Net RF 0.977 0.0043
+features
+LR 0.985 0.0034
+KNN 0.016 0.007 KNC 0.976 0.0042
+LGB 29.46 0.0415 LGBM 0.985 0.0035
+LR 0.245 0.035
+RF 70.00 3.910
+LDB and LR is the highest, with the lowest computation
+cost, making the best models for generalization.
+the accuracy of LR is high. The RF model achieved a high
+false prediction error of 37 samples. The same is the case Performance analysis using cross‑validation
+with the LR model. This confusion matrix analysis shows To ensure the reliability and robustness of the proposed
+that applied ML models have performed well on transfer- methods, we conducted a comprehensive cross-valida-
+based features. tion-based performance analysis. The results, summa-
+rized in Table 7, demonstrate that the models achieved
+Computational complexity analysis high accuracy with minimal standard deviation. Among
+The time taken by each applied ML model to train on the applied methods, LR and LGBM emerged as the top
+spatial and MobLG-Net features is the computational performers, both achieving a k-fold accuracy of 0.985
+complexity. The time taken by RF is 70 seconds, as shown with standard deviations of 0.0034 and 0.0035, respec-
+in Table 6, which is the highest time for training on spa- tively. The RF and KNC models also exhibited strong
+tial features. Also, the KNN and LR took less than a performance, with accuracies of 0.977 and 0.976 and
+second to predict fractures in radiographic images. An standard deviations of 0.0043 and 0.0042, respectively.
+average performance is shown with the spatial features, These results highlight the effectiveness of the selected
+with LGB and RF taking too much time. When the time models and the robustness of our approach to detecting
+comparison is made with the novel extracted features, bone fractures.
+the proposed approach also outperformed in computa-
+tional cost. The highest time taken is by random forest, Comparison with state‑of‑the‑art approaches
+which is 3.9 seconds, followed by KNN, RGB, and LR, The comparative analysis of the proposed approach
+taking a fraction of a second. Moreover, the accuracy of with the previous state-of-the-art studies is presented
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 14 of 16
+in Table 8. For an honest comparison, we have taken the Table 9 Performance comparison of ML models and proposed
+most recent studies between the years 2020 and 2024. approach as ablation study analysis
+The highest accuracy achieved by previous research is Model Performance accuracy Performance accuracy
+98%, which used only hand-wrist images and has very using classical approaches using proposed MobLG‑Net
+(MobileNet and LGBM) method
+limited application. Also, the classical CNN model is
+used in the study to get this high accuracy. Following this, KNN 0.72 0.98
+the remaining studies have not shown extraordinary per- LGB 0.93 0.99
+formance to be noted. The proposed novel feature extrac- LR 0.64 0.99
+tion has yielded good results, and with 99% accuracy, the RF 0.89 0.98
+approach stood prominent in detecting fracture in radio-
+graphic images.
+to underrepresented groups, such as pediatric patients,
+Ablation study
+whose bone structure and fracture characteristics differ
+The ablation study provides a comprehensive analy- from adults. Additionally, our study focuses on binary
+sis of the performance improvements achieved by the classification, distinguishing between fractured and
+proposed MobLG-Net method compared to classical normal bones. Expanding this work to include multi-
+approaches. Table 9 highlights the accuracy achieved class classification for different types of fractures such
+using both techniques across various machine learn- as greenstick, comminuted, and spiral fractures-could
+ing methods. The classical combination of MobileNet enhance the clinical applicability of the model.
+and LGBM demonstrated solid performance, with accu-
+racy values ranging from 0.64 to 0.93 depending on the Conclusion and future work
+method. However, the proposed MobLG-Net approach Fracture detection using X-ray images and transfer learn-
+significantly enhanced these results, achieving near- ing-based feature extraction is presented in this study.
+perfect accuracy values between 0.98 and 0.99. Nota- The spatial and MobLG-Net features are extracted using
+bly, methods like LR and LGBM saw the most dramatic CNNs and the proposed MobLG-Net method. During
+improvement, with accuracy jumping from 0.64 to 0.99 the research experiments, both sets of extracted features
+and 0.93 to 0.99, respectively. This analysis clearly under- are fed to various ML methods, and their performance is
+scores the efficacy of MobLG-Net, demonstrating its compared. The results indicate that a low performance is
+potential to set a new benchmark for robust and accurate observed with the spatial features. However, the models
+feature extraction in machine learning pipelines. trained on the proposed MobLG-Net feature outper-
+formed and gave a high-performance score. We analyzed
+Study limitations the performance matrices of applied ML methods and
+While our study demonstrates the effectiveness of the noted that the proposed approach has satisfactory results
+proposed MobLG-Net method for classifying fractured in all matrices. The time complexity analysis of the
+and normal bones using a dataset of 9,463 X-ray images, applied models is done to check the time taken by each.
+it is not without limitations. One significant challenge is Performance is also validated using a cross-validation
+the dataset size, which, while substantial, may not fully mechanism. The study shows that the models trained
+capture the diversity of fracture patterns across differ- using MobLG-Net features took less learning time. The
+ent populations. This limitation could potentially affect research results are compared with other state-of-the-art
+the model’s generalizability, particularly when applied studies.
+Table 8 The contrast between the proposed and other state-of-the-art studies in predicting fractures using radiographic images
+Reference Year Technique Accuracy
+[13] 2020 CNN, VGG16 96
+[14] 2020 GoogLeNet-inception v3, M1, M2 86.78%
+[16] 2021 CNN 98%
+[15] 2022 wrist fracture detection-combo (WFD-C) 86.39%
+[18] 2023 Naive Bayes,, Nearest Neighbors,SVM, Random Forest, Decision 92.85%
+Tree
+[19] 2024 Binary Classification 96.5%
+This study 2024 LGB, LR, RF, KNN 99%, 99%, 98%, 98%
+
+A lam et al. BMC Medical Imaging (2025) 25:5 Page 15 of 16
+The study to detect fractures yielded satisfactory results 7. Ramesh J, Aburukba R, Sagahyroon A. A remote healthcare monitor-
+ing framework for diabetes prediction using machine learning. Healthc
+and generalized the unseen data well. In future work, we
+Technol Lett. 2021;8(3):45–57.
+aim to extend the research dataset size, including more 8. Thalji N, Aljarrah E, Almomani MH, Raza A, Migdady H, Abualigah L. Seg-
+radiographic images, so that a more robust prediction mented X-ray image data for diagnosing dental periapical diseases using
+deep learning. Data Brief. 2024;54:110539.
+can be made. Further, instead of binary classification (i.e.,
+9. Das NN, Kumar N, Kaur M, Kumar V, Singh D. Automated deep transfer
+fracture or normal), we will introduce multi-class clas- learning-based approach for detection of COVID-19 infection in chest
+sification, which will identify the types of fractures. By X-rays. Irbm. 2022;43(2):114–9.
+10. Kaya O, Taşcı B. A Pyramid Deep Feature Extraction Model for the
+addressing this area, we will be able to implement this
+Automatic Classification of Upper Extremity Fractures. Diagnostics.
+research practically and improve the clinical diagnosis of 2023;13(21):3317.
+fractures. 11. Guan B, Zhang G, Yao J, Wang X, Wang M. Arm fracture detection in X-rays
+based on improved deep convolutional neural network. Comput Electr
+Eng. 2020;81:106530.
+12. Kim D, MacKinnon T. Artificial intelligence in fracture detection:
+Authors’ contributions
+transfer learning from deep convolutional neural networks. Clin Radiol.
+AA conceptualization, data curation, writing manuscript. ASAS conceptualiza-
+2018;73(5):439–45.
+tion, formal analysis, writing manuscript. MNS methodology, formal analysis,
+13. Tanzi L, Vezzetti E, Moreno R, Moos S. X-ray bone fracture classification
+data curation. AR software, project administration, methodology EAMB fund-
+using deep learning: a baseline for designing a reliable approach. Appl
+ing acquisition, visualization, investigation. EBT visualization, formal analysis,
+Sci. 2020;10(4):1507.
+software. IdlTZ investigation, resources, validation. IA supervision, validation,
+14. Lee C, Jang J, Lee S, Kim YS, Jo HJ, Kim Y. Classification of femur fracture
+writing and editing the manuscript. All authors reviewed the manuscript.
+in pelvic X-ray images using meta-learned deep neural network. Sci Rep.
+2020;10(1):13694.
+Funding
+15. Hardalaç F, Uysal F, Peker O, Çiçeklidağ M, Tolunay T, Tokgöz N, et al. Frac-
+This study is supported by the European University of Atlantic.
+ture detection in wrist X-ray images using deep learning-based object
+detection models. Sensors. 2022;22(3):1285.
+Data availability
+16. Oka K, Shiode R, Yoshii Y, Tanaka H, Iwahashi T, Murase T. Artificial intel-
+The dataset used in this study is publicly available at the following link: https://
+ligence to diagnosis distal radius fracture using biplane plain X-rays. J
+www. kaggle. com/ datas ets/ devba trax/ fract ure- detec tion- using-x- ray- images/
+Orthop Surg Res. 2021;16:1–7.
+data.
+17. Sahin ME. Image processing and machine learning-based bone fracture
+detection and classification using X-ray images. Int J Imaging Syst Tech-
+Declarations nol. 2023;33(3):853–65.
+18. Ahmed KD, Hawezi R. Detection of bone fracture based on machine
+Ethics approval and consent to participate learning techniques. Meas Sensors. 2023;27:100723.
+Not applicable. 19. Ali SNE, Sherif HM, Hassan SM, El Marakby AAER. Long bones x-ray
+fracture classification using machine learning. J Al-Azhar Univ Eng
+Consent for publication Sect. 2024;19:121–33.
+Not applicable. 20. Batra D. Fracture detection using x-ray images. https:// www. kaggle.
+com/ datas ets/ devba trax/ fract ure- detec tion- using-x- ray- images/ data.
+Competing interests Accessed 01 Aug 2024.
+The authors declare no competing interests. 21. Khalid M, Raza A, Younas F, Rustam F, Villar MG, Ashraf I, et al. Novel
+Sentiment Majority Voting Classifier and Transfer Learning-based Feature
+Engineering for Sentiment Analysis of Deepfake Tweets. IEEE Access;
+Received: 13 September 2024 Accepted: 23 December 2024 2024;12:67117–29.
+22. Simonyan K. Very deep convolutional networks for large-scale image
+recognition. arXiv preprint arXiv:1409.1556. 2014.
+23. Raza A, Younas F, Siddiqui HUR, Rustam F, Villar MG, Alvarado ES, et al. An
+improved deep convolutional neural network-based YouTube video clas-
+References sification using textual features. Heliyon. 2024;10:1–16.
+1. AlGhaithi A, Al Maskari S. Artificial intelligence application in bone frac- 24. Terziyan V, Vitko O. Causality-aware convolutional neural networks for
+ture detection. J Musculoskelet Surg Res. 2021;5:4. advanced image classification and generation. Procedia Comput Sci.
+2. Wu AM, Bisignano C, James SL, Abady GG, Abedi A, Abu-Gharbieh E, et al. 2023;217:495–506.
+Global, regional, and national burden of bone fractures in 204 countries 25. Meena T, Roy S. Bone fracture detection using deep supervised learning
+and territories, 1990–2019: a systematic analysis from the Global Burden from radiological images: A paradigm shift. Diagnostics. 2022;12(10):2420.
+of Disease Study 2019. Lancet Health Longev. 2021;2(9):e580–92. 26. Hussein HI, Mohammed AO, Hassan MM, Mstafa RJ. Lightweight deep
+3. Williamson S, Landeiro F, McConnell T, Fulford-Smith L, Javaid MK, Judge CNN-based models for early detection of COVID-19 patients from chest
+A, et al. Costs of fragility hip fractures globally: a systematic review and X-ray images. Expert Syst Appl. 2023;223:119900.
+meta-regression analysis. Osteoporos Int. 2017;28:2791–800. 27. Shah AA, Parah SA, Rashid M, Elhoseny M. Efficient image encryption
+4. Ayesa SL, Katelaris AG, Brennan PC, Grieve SM. Medical imaging educa- scheme based on generalized logistic map for real time image process-
+tion opportunities for junior doctors and non-radiologist clinicians: A ing. J Real-Time Image Proc. 2020;17(6):2139–51.
+review. J Med Imaging Radiat Oncol. 2021;65(6):710–8. 28. Nasim S, Al-Shamayleh AS, Thalji N, Raza A, Abualigah L, Alzahrani AI, et al.
+5. Kwakernaak S, van Mens K, Cahn W, Janssen R, Investigators G, et al. Using Novel Meta Learning Approach for Detecting Postpartum Depression
+machine learning to predict mental healthcare consumption in non- Disorder Using Questionnaire Data. IEEE Access. 2024.
+affective psychosis. Schizophr Res. 2020;218:166–72. 29. Younas F, Raza A, Thalji N, Abualigah L, Zitar RA, Jia H. An efficient artificial
+6. Ahammed M, Mamun MA, Uddin MS. A machine learning approach for intelligence approach for early detection of cross-site scripting attacks.
+skin disease detection and classification using image segmentation. Decis Analytics J. 2024;11:100466.
+Healthc Analytics. 2022;2:100122. https:// doi. org/ 10. 1016/j. health. 2022. 30. Tanveer MU, Munir K, Raza A, Almutairi MS. Novel artificial intelligence
+100122. assisted Landsat-8 imagery analysis for mango orchard detection and
+area mapping. PLoS ONE. 2024;19(6):e0304450.
+
+Alam et al. BMC Medical Imaging (2025) 25:5 Page 16 of 16
+31. Haider M, Hashmi MSA, Raza A, Ibrahim M, Fitriyani NL, Syafrudin M, et al.
+Novel Ensemble Learning Algorithm for Early Detection of Lower Back
+Pain Using Spinal Anomalies. Mathematics. 2024;12(13):1955.
+32. Weerts HJ, Mueller AC, Vanschoren J. Importance of tuning hyperparam-
+eters of machine learning algorithms. arXiv preprint arXiv:2007.07588.
+2020.
+33. Sayed MS, Rony MAT, Islam MS, Raza A, Tabassum S, Daoud MS, et al. A
+Novel Deep Learning Approach for Forecasting Myocardial Infarction
+Occurrences with Time Series Patient Data. J Med Syst. 2024;48(1):53.
+Publisher’s Note
+Springer Nature remains neutral with regard to jurisdictional claims in pub-
+lished maps and institutional affiliations.

@@ -1,0 +1,4 @@
+.env
+project/
+rag_backend/__pycache__/
+__pycache__/
